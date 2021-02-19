@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const { authorize } = require("../auth/middlewares");
 
 const artistsRouter = express.Router();
 
@@ -27,7 +28,7 @@ artistsRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-artistsRouter.get("/search/:query", async (req, res, next) => {
+artistsRouter.get("/search/:query",  async (req, res, next) => {
   try {
     const response = await axios(
       `${process.env.DEEZER_BASE_URL}/search?q=/${req.params.query}`,
@@ -50,7 +51,5 @@ artistsRouter.get("/search/:query", async (req, res, next) => {
     next(error);
   }
 });
-
-
 
 module.exports = artistsRouter;
