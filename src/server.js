@@ -21,10 +21,12 @@ const {
 
 const server = express();
 
-const whiteList =
+const whitelist =
   process.env.NODE_ENV === "production"
     ? [process.env.FE_URL_PROD]
     : [process.env.FE_URL_DEV];
+
+// const whitelist = ["http://localhost:3000"];
 
 const corsOptions = {
   origin: (origin, callback) => {
