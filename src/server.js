@@ -7,6 +7,7 @@ const passport = require("passport")
 const cookieParser = require("cookie-parser")
 
 const usersRouter = require("./services/users")
+const artistsRouter = require("./services/artists")
 const oauth = require("./services/auth/oauth")
 
 const {
@@ -40,7 +41,7 @@ server.use(cookieParser())
 server.use(passport.initialize())
 
 server.use("/users", usersRouter)
-
+server.use("/artists", artistsRouter)
 // ERROR HANDLERS MIDDLEWARES
 
 server.use(badRequestHandler)
