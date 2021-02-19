@@ -7,6 +7,7 @@ const passport = require("passport")
 const cookieParser = require("cookie-parser")
 
 const usersRouter = require("./services/users")
+const albumsRouter = require("./services/albums")
 const oauth = require("./services/auth/oauth")
 
 const {
@@ -40,6 +41,7 @@ server.use(cookieParser())
 server.use(passport.initialize())
 
 server.use("/users", usersRouter)
+server.use("/albums", albumsRouter)
 
 // ERROR HANDLERS MIDDLEWARES
 
@@ -61,4 +63,4 @@ mongoose
       console.log("Running on port", port)
     })
   )
-  .catch(err => console.log(err))
+  .catch((err) => console.log(err))
