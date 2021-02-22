@@ -120,7 +120,40 @@ usersRouter.get(
         path: "/users/refreshToken",
       });
 
-      res.status(200).redirect("http://localhost:3000/app");
+      const redirectPath =
+        process.env.NODE_ENV === "production"
+          ? process.env.FE_URL_PROD
+          : process.env.FE_URL_DEV;
+      res.status(200).redirect(`${redirectPath}/app`);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+usersRouter.get(
+  "/facebookLogin",
+  passport.authenticate("facebook", { scope: ["profile", "email"] })
+);
+
+usersRouter.get(
+  "/facebookRedirect",
+  passport.authenticate("facebook"),
+  async (req, res, next) => {
+    try {
+      res.cookie("accessToken", req.user.tokens.accessToken, {
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", req.user.tokens.refreshToken, {
+        httpOnly: true,
+        path: "/users/refreshToken",
+      });
+
+      const redirectPath =
+        process.env.NODE_ENV === "production"
+          ? process.env.FE_URL_PROD
+          : process.env.FE_URL_DEV;
+      res.status(200).redirect(`${redirectPath}/app`);
     } catch (error) {
       next(error);
     }

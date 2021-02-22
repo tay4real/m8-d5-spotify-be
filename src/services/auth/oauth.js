@@ -1,5 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const UserModel = require("../users/schema");
 const { authenticate } = require("./");
 
@@ -23,6 +24,43 @@ passport.use(
 
       try {
         const user = await UserModel.findOne({ googleId: profile.id });
+
+        if (user) {
+          const tokens = await authenticate(user);
+          next(null, { user, tokens });
+        } else {
+          const createdUser = new UserModel(newUser);
+          await createdUser.save();
+          const tokens = await authenticate(createdUser);
+          next(null, { user: createdUser, tokens });
+        }
+      } catch (error) {
+        next(error);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FB_APP_ID,
+      clientSecret: process.env.FB_APP_SECRET,
+      callbackURL: process.env.FB_REDIRECTURL,
+    },
+    async (request, accessToken, refreshToken, profile, next) => {
+      console.log(profile);
+      const newUser = {
+        facebookId: profile.id,
+        name: profile.name.givenName,
+        surname: profile.name.familyName,
+        email: profile.emails[0].value,
+        role: "User",
+        refreshTokens: [],
+      };
+
+      try {
+        const user = await UserModel.findOne({ facebookId: profile.id });
 
         if (user) {
           const tokens = await authenticate(user);
