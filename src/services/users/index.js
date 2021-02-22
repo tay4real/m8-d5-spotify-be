@@ -160,4 +160,26 @@ usersRouter.get(
   }
 );
 
+usersRouter.post("/logout", authorize, async (req, res, next) => {
+  try {
+    req.user.refreshTokens = req.user.refreshTokens.filter(
+      (t) => t.token !== req.body.refreshToken
+    );
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    next(err);
+  }
+});
+
+usersRouter.post("/logoutAll", authorize, async (req, res, next) => {
+  try {
+    req.user.refreshTokens = [];
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = usersRouter;
